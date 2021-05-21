@@ -1,0 +1,23 @@
+name: Continuous integration
+on: [push, pull_request]
+
+jobs:
+  check:
+    name: Code checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - run: cargo check
+
+  build:
+    name: Build
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - run: cargo build
+
