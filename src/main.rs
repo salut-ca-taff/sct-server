@@ -7,14 +7,13 @@
     clippy::cargo
 )]
 
-use std::env;
-
 use actix_web::{get, middleware::Logger, web::Data, App, HttpResponse, HttpServer, Responder};
 use anyhow::{Context, Result};
 use dotenv::dotenv;
 use futures::TryStreamExt;
 use log::info;
 use reql::{cmd::connect::Options, Session};
+use std::env;
 
 #[get("/")]
 async fn root(db: Data<Session>) -> impl Responder {
