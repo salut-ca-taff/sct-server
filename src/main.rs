@@ -8,16 +8,25 @@
 )]
 
 use actix_web::{get, App, HttpResponse, HttpServer, Responder};
+use reql::{cmd::connect::Options, r};
+use std::error::Error;
 
 #[get("/")]
 async fn root() -> impl Responder {
     HttpResponse::Ok().body("Salut ca taff ?")
 }
 
+const RETHINKDB_PORT: u16 = 28015;
+const SERVER_PORT: u16 = 8080;
+
 #[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(root))
-        .bind("127.0.0.1:8080")?
+async fn main() -> Result<(), Box<dyn Error>> {
+    let session = r.connect(Options::new().port(RETHINKDB_PORT)).await?;
+
+    HttpServer::new(move || App::new().data(session.clone()).service(root))
+        .bind(format!("127.0.0.1:{}", SERVER_PORT))?
         .run()
-        .await
+        .await?;
+
+    Ok(())
 }
