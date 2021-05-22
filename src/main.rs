@@ -49,12 +49,13 @@ async fn create_tables(db: &PgPool) -> Result<()> {
     sqlx::query(
         r#"
 CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL NOT NULL,
     username VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
     display_name VARCHAR(100) NOT NULL,
     school VARCHAR(100) NOT NULL,
-    avatar VARCHAR(100) NOT NULL
+    avatar VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id)
 );
     "#,
     )
@@ -64,12 +65,13 @@ CREATE TABLE IF NOT EXISTS users (
     sqlx::query(
         r#"
 CREATE TABLE IF NOT EXISTS comments (
-    id SERIAL PRIMARY KEY,
-    author INTEGER REFERENCES users(id) NOT NULL,
+    id BIGSERIAL NOT NULL,
+    author BIGINT REFERENCES users(id) NOT NULL,
     content VARCHAR(512) NOT NULL,
     attachments VARCHAR(100) ARRAY[10],
-    stars INTEGER[][5],
-    created_at TIMESTAMP NOT NULL
+    -- stars BIGINT[][5],
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
 );
     "#,
     )
@@ -79,15 +81,16 @@ CREATE TABLE IF NOT EXISTS comments (
     sqlx::query(
         r#"
 CREATE TABLE IF NOT EXISTS resources (
-    id SERIAL PRIMARY KEY,
-    author INTEGER REFERENCES users(id) NOT NULL,
+    id BIGSERIAL NOT NULL,
+    author BIGINT REFERENCES users(id) NOT NULL,
     title VARCHAR(100) NOT NULL,
     description VARCHAR(512),
     attachments VARCHAR(100) ARRAY[10],
-    comments INTEGER[],
-    stars INTEGER[][5],
-    views INTEGER NOT NULL,
-    created_at TIMESTAMP NOT NULL
+    -- comments BIGINT[],
+    -- stars BIGINT[][5],
+    views BIGINT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
 );
     "#,
     )
@@ -97,10 +100,11 @@ CREATE TABLE IF NOT EXISTS resources (
     sqlx::query(
         r#"
 CREATE TABLE IF NOT EXISTS chapters (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL NOT NULL,
     name VARCHAR(100) NOT NULL,
-    resources INTEGER[],
-    prerequesites INTEGER[]
+    resources BIGINT[],
+    prerequesites BIGINT[],
+    PRIMARY KEY (id)
 );
     "#,
     )
@@ -110,9 +114,10 @@ CREATE TABLE IF NOT EXISTS chapters (
     sqlx::query(
         r#"
 CREATE TABLE IF NOT EXISTS subjects (
-    id SERIAL PRIMARY KEY,
+    id VARCHAR(100) NOT NULL UNIQUE,
     name VARCHAR(100) NOT NULL,
-    chapters INTEGER[] NOT NULL
+    chapters BIGINT[] NOT NULL,
+    PRIMARY KEY (id)
 );
     "#,
     )
