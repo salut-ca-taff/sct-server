@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 actix-web = "3.3.2"
 reql = "0.10.0"
+futures = "0.3.15"

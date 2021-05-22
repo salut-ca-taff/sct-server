@@ -1650,6 +1650,7 @@ name = "sct-server"
 version = "0.1.0"
 dependencies = [
  "actix-web",
+ "futures",
  "reql",
 ]
 

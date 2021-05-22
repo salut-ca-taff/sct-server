@@ -8,8 +8,9 @@
 )]
 
 use actix_web::{get, App, HttpResponse, HttpServer, Responder};
-use reql::{cmd::connect::Options, r};
-use std::error::Error;
+use futures::TryStreamExt;
+use reql::{cmd::connect::Options, r, types::ServerStatus, Session};
+use std::error;
 
 #[get("/")]
 async fn root() -> impl Responder {
@@ -20,8 +21,20 @@ const RETHINKDB_PORT: u16 = 28015;
 const SERVER_PORT: u16 = 8080;
 
 #[actix_web::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+async fn main() -> Result<(), Box<dyn error::Error>> {
     let session = r.connect(Options::new().port(RETHINKDB_PORT)).await?;
+
+    if let Err(e) = r
+        .table_create("taff")
+        .run::<&Session, ServerStatus>(&session)
+        .try_next()
+        .await
+    {
+        match e {
+            reql::Error::Runtime(reql::Runtime::Availability(_)) => (),
+            e => Err(e)?,
+        }
+    }
 
     HttpServer::new(move || App::new().data(session.clone()).service(root))
         .bind(format!("127.0.0.1:{}", SERVER_PORT))?
