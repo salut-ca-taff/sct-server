@@ -7,19 +7,16 @@
     clippy::cargo
 )]
 
-use actix_web::{get, middleware::Logger, web::Data, App, HttpResponse, HttpServer, Responder};
+use actix_web::{middleware::Logger, App, HttpServer};
 use anyhow::{Context, Result};
 use dotenv::dotenv;
 use log::info;
-use sqlx::postgres::{PgPool, PgPoolOptions};
+use sqlx::postgres::PgPoolOptions;
 use std::env;
 
+mod data;
+mod models;
 mod routes;
-
-#[get("/")]
-async fn root(_db: Data<PgPool>) -> impl Responder {
-    HttpResponse::Ok().body(format!("Salut ca taff ?"))
-}
 
 #[actix_web::main]
 async fn main() -> Result<()> {
