@@ -14,7 +14,8 @@ use futures::TryStreamExt;
 use log::info;
 use reql::{cmd::connect::Options, r, types::ServerStatus, Session};
 use std::env;
-use std::error;
+
+mod routes;
 
 #[get("/")]
 async fn root(db: Data<Session>) -> impl Responder {
@@ -37,7 +38,7 @@ async fn main() -> Result<()> {
     let host = env::var("HOST").context("HOST environment variable is not set")?;
     let port = env::var("PORT").context("PORT environment variable is not set")?;
 
-    let mut database_options = Options::default();
+    let mut database_options = Options::default().db("sct");
     if let Ok(database_host) = env::var("DATABASE_HOST") {
         database_options = database_options.host(database_host);
     }
@@ -65,7 +66,7 @@ async fn main() -> Result<()> {
         App::new()
             .data(conn.clone())
             .wrap(Logger::default())
-            .service(root)
+            .configure(routes::init)
     });
 
     info!("Starting server...");
