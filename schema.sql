@@ -1,8 +1,9 @@
 CREATE TABLE "users" (
   "id" SERIAL PRIMARY KEY NOT NULL,
-  "display_name" varchar(32) NOT NULL,
   "username" varchar(32) NOT NULL,
   "password" varchar(255) NOT NULL,
+  "email" varchar(100) NOT NULL,
+  "display_name" varchar(32) NOT NULL,
   "school" varchar(255) NOT NULL
 );
 
@@ -36,8 +37,6 @@ CREATE TABLE "chapters" (
   "id" SERIAL PRIMARY KEY NOT NULL,
   "subject" int NOT NULL,
   "title" varchar(255) NOT NULL,
-  "creator" int NOT NULL,
-  "display_name" varchar(32) NOT NULL,
   "description" varchar(255)
 );
 
@@ -57,5 +56,3 @@ ALTER TABLE "stars" ADD FOREIGN KEY ("user") REFERENCES "users" ("id");
 ALTER TABLE "stars" ADD FOREIGN KEY ("resource") REFERENCES "resources" ("id");
 
 ALTER TABLE "chapters" ADD FOREIGN KEY ("subject") REFERENCES "subjects" ("id");
-
-ALTER TABLE "chapters" ADD FOREIGN KEY ("creator") REFERENCES "users" ("id");

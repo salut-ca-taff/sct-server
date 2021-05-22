@@ -1,14 +1,13 @@
 use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, sqlx::FromRow)]
 pub struct Comment {
-    id: u64,
-    author: String,
+    id: i32,
+    author: i32,
     content: String,
-    attachements: Option<Vec<String>>,
-    stars: (Vec<u64>, Vec<u64>, Vec<u64>, Vec<u64>, Vec<u64>),
-    date: DateTime<Utc>,
+    attachements: String,
+    created_at: DateTime<Utc>,
 }
 
 impl Comment {}

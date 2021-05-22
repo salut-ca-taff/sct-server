@@ -1,9 +1,10 @@
+use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
-pub struct Chapter {
+pub struct Stars {
     pub id: i32,
-    pub subject: i32,
-    pub title: String,
-    pub description: String,
+    pub value: i32,
+    pub user: i32,
+    pub resource: i32,
 }

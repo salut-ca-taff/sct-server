@@ -1,15 +1,15 @@
 use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, sqlx::FromRow)]
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
 pub struct Resource {
-    pub id: i64,
-    pub author: i64,
-    pub description: String,
-    // pub attachements: Option<Vec<String>>,
-    // pub comments: Vec<i32>,
-    //pub stars: (Vec<i32>, Vec<i32>, Vec<i32>, Vec<i32>, Vec<i32>),
-    pub views: i64,
+    pub id: i32,
+    pub chapter: i32,
+    pub author: i32,
+    pub title: String,
+    pub content: String,
+    pub attachments: String,
+    pub view_count: i32,
     pub created_at: DateTime<Utc>,
 }
 
