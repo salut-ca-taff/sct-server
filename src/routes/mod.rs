@@ -1,7 +1,7 @@
 use actix_web::{get, web, HttpResponse, Responder};
 
 pub mod auth;
-pub mod resource;
+pub mod resources;
 
 #[get("/")]
 async fn root() -> impl Responder {
@@ -11,5 +11,5 @@ async fn root() -> impl Responder {
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(root)
         .service(web::scope("/auth").configure(auth::init))
-        .service(web::scope("/resource").configure(resource::init));
+        .service(web::scope("/").configure(resources::init));
 }

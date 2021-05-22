@@ -1,4 +1,5 @@
 use serde::Serialize;
+
 #[derive(Debug, Serialize, sqlx::FromRow)]
 pub struct Chapter {
     pub id: i64,
