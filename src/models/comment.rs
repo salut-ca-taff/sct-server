@@ -1,16 +1,13 @@
 use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
-
-use crate::models::user::User;
 
 #[derive(Deserialize, Serialize)]
 pub struct Comment {
-    id: Uuid,
+    id: u64,
     author: String,
     content: String,
     attachements: Option<Vec<String>>,
-    stars: (Vec<User>, Vec<User>, Vec<User>, Vec<User>),
+    stars: (Vec<u64>, Vec<u64>, Vec<u64>, Vec<u64>, Vec<u64>),
     date: DateTime<Utc>,
 }
 

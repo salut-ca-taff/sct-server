@@ -1,18 +1,21 @@
 use chrono::prelude::*;
-use serde::{Deserialize, Serialize};
-use uuid::Uuid;
+use serde::Serialize;
 
-use crate::models::comment::Comment;
-use crate::models::user::User;
-
-#[derive(Deserialize, Serialize)]
+#[derive(Debug, Serialize, sqlx::FromRow)]
 pub struct Resource {
-    id: Uuid,
-    author: String,
-    description: String,
-    attachements: Option<Vec<String>>,
-    comments: Vec<Comment>,
-    stars: (Vec<User>, Vec<User>, Vec<User>, Vec<User>, Vec<User>),
-    views: usize,
-    data: DateTime<Utc>,
+    pub id: i64,
+    pub author: i64,
+    pub description: String,
+    // pub attachements: Option<Vec<String>>,
+    // pub comments: Vec<i32>,
+    //pub stars: (Vec<i32>, Vec<i32>, Vec<i32>, Vec<i32>, Vec<i32>),
+    pub views: i64,
+    pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug)]
+pub struct NewResource {
+    pub author: i64,
+    pub description: String,
+    pub views: i64,
 }
