@@ -22,7 +22,7 @@ CREATE TABLE "resources" (
   "title" varchar(255) NOT NULL,
   "content" varchar(1000),
   "attachments" varchar(65535),
-  "view_count" int NOT NULL,
+  "view_count" int NOT NULL DEFAULT 0,
   "created_at" timestamp NOT NULL DEFAULT current_timestamp
 );
 

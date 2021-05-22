@@ -15,9 +15,9 @@ pub struct Resource {
 
 #[derive(Debug, Deserialize)]
 pub struct NewResource {
-    pub author: i64,
+    pub author: i32,
     pub description: String,
 }
 
-#[derive(Debug, sqlx::FromRow)]
-pub struct ResourceId(pub i64);
+#[derive(Debug, Serialize, sqlx::FromRow)]
+pub struct ResourceId(pub i32);

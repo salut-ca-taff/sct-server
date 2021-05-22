@@ -1,8 +1,8 @@
 use actix_web::{get, post, web, HttpResponse, Responder};
 use sqlx::postgres::PgPool;
 
-use crate::data::resources::{add_resource, get_resource_by_id};
-use crate::models::resources::NewResource;
+use crate::data::resources::{add_resource_to_chapter, get_resource_by_id};
+use crate::models::resources::{NewResource, ResourceId};
 
 #[get("/{chapter_id}/resources")]
 async fn get_resources_of_subject(
@@ -23,14 +23,14 @@ async fn get_resource(
 
 #[post("/{chapter_id}/resources")]
 async fn create_resource(
-    web::Path(chapter_id): web::Path<String>,
+    web::Path(chapter_id): web::Path<i32>,
     new_resource: web::Json<NewResource>,
     db: web::Data<PgPool>,
 ) -> impl Responder {
-    let id = add_resource(db.get_ref(), new_resource.into_inner())
+    let id = add_resource_to_chapter(db.get_ref(), new_resource.into_inner(), chapter_id)
         .await
         .unwrap();
-    HttpResponse::Ok()
+    web::Json(ResourceId(id))
 }
 
 pub fn init(cfg: &mut web::ServiceConfig) {

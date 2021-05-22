@@ -17,14 +17,19 @@ WHERE resource.id = $1;
     Ok(resource)
 }
 
-pub async fn add_resource(db: &PgPool, new_resource: NewResource) -> anyhow::Result<i64> {
+pub async fn add_resource_to_chapter(
+    db: &PgPool,
+    new_resource: NewResource,
+    chapter: i32,
+) -> anyhow::Result<i32> {
     let ResourceId(id) = sqlx::query_as::<_, ResourceId>(
         r#"
-INSERT INTO resources ( author, description )
-VALUES ( $1, $2 )
+INSERT INTO resources ( chapter, author, description )
+VALUES ( $1, $2, $3 )
 RETURNING id;
         "#,
     )
+    .bind(chapter)
     .bind(new_resource.author)
     .bind(new_resource.description)
     .fetch_one(db)
