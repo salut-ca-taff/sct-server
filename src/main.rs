@@ -7,26 +7,51 @@
     clippy::cargo
 )]
 
-use actix_web::{get, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, middleware::Logger, web::Data, App, HttpResponse, HttpServer, Responder};
+use anyhow::{Context, Result};
+use dotenv::dotenv;
 use futures::TryStreamExt;
+use log::info;
 use reql::{cmd::connect::Options, r, types::ServerStatus, Session};
+use std::env;
 use std::error;
 
 #[get("/")]
-async fn root() -> impl Responder {
-    HttpResponse::Ok().body("Salut ca taff ?")
+async fn root(db: Data<Session>) -> impl Responder {
+    let infos: Option<i32> = reql::r
+        .now()
+        .day_of_week()
+        .run(db.as_ref())
+        .try_next()
+        .await
+        .unwrap();
+    HttpResponse::Ok().body(format!("Salut ca taff ? {:?}", infos))
 }
 
-const RETHINKDB_PORT: u16 = 28015;
-const SERVER_PORT: u16 = 8080;
-
 #[actix_web::main]
-async fn main() -> Result<(), Box<dyn error::Error>> {
-    let session = r.connect(Options::new().port(RETHINKDB_PORT)).await?;
+async fn main() -> Result<()> {
+    env::set_var("RUST_LOG", "actix_web=info");
+    dotenv().ok();
+    env_logger::init();
+
+    let host = env::var("HOST").context("HOST environment variable is not set")?;
+    let port = env::var("PORT").context("PORT environment variable is not set")?;
+
+    let mut database_options = Options::default();
+    if let Ok(database_host) = env::var("DATABASE_HOST") {
+        database_options = database_options.host(database_host);
+    }
+    if let Ok(database_port) = env::var("DATABASE_PORT") {
+        database_options = database_options.host(database_port);
+    }
+    let conn = reql::r
+        .connect(database_options)
+        .await
+        .context("Couldn't connect to RethinkDB database")?;
 
     if let Err(e) = r
         .table_create("taff")
-        .run::<&Session, ServerStatus>(&session)
+        .run::<&Session, ServerStatus>(&conn)
         .try_next()
         .await
     {
@@ -36,10 +61,15 @@ async fn main() -> Result<(), Box<dyn error::Error>> {
         }
     }
 
-    HttpServer::new(move || App::new().data(session.clone()).service(root))
-        .bind(format!("127.0.0.1:{}", SERVER_PORT))?
-        .run()
-        .await?;
+    let server = HttpServer::new(move || {
+        App::new()
+            .data(conn.clone())
+            .wrap(Logger::default())
+            .service(root)
+    });
+
+    info!("Starting server...");
+    server.bind(format!("{}:{}", host, port))?.run().await?;
 
     Ok(())
 }
