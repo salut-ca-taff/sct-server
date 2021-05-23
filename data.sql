@@ -21,4 +21,13 @@ VALUES ( 'chimie', 'Chimie' );
 INSERT INTO "chapters" ( "subject", "title" )
 VALUES ( ( SELECT "id" FROM "subjects" WHERE "slug" = 'maths' ), 'Développements limité' );
 
+INSERT INTO "chapters" ( "subject", "title" )
+VALUES ( ( SELECT "id" FROM "subjects" WHERE "slug" = 'maths' ), 'Espaces vectoriels' );
+
+INSERT INTO "chapters" ( "subject", "title" )
+VALUES ( ( SELECT "id" FROM "subjects" WHERE "slug" = 'maths' ), 'Matrices' );
+
+INSERT INTO "chapters" ( "subject", "title" )
+VALUES ( ( SELECT "id" FROM "subjects" WHERE "slug" = 'maths' ), 'Groupes symétrique et déterminants' );
+
 COMMIT;
