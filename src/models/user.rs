@@ -2,10 +2,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
 pub struct User {
-    id: i32,
-    username: String,
-    password: String,
-    email: String,
-    display_name: String,
-    school: String,
+    pub email: String,
+    pub username: String,
+    pub salt: String,
+    pub password: String,
+    pub school: String,
 }

@@ -4,4 +4,5 @@ use serde::{Deserialize, Serialize};
 pub struct Subject {
     pub id: i32,
     pub title: String,
+    pub color: String,
 }

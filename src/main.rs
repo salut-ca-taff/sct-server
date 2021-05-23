@@ -11,10 +11,11 @@ use actix_web::{middleware::Logger, App, HttpServer};
 use anyhow::{Context, Result};
 use dotenv::dotenv;
 use log::info;
-use sqlx::postgres::{PgPool, PgPoolOptions};
+use sqlx::postgres::PgPoolOptions;
 use std::env;
 
-mod data;
+use crate::routes::auth::AuthState;
+
 mod models;
 mod routes;
 
@@ -31,11 +32,13 @@ async fn main() -> Result<()> {
 
     let db = PgPoolOptions::new().connect(&database_url).await?;
 
+    let auth_state = actix_web::web::Data::new(AuthState::default());
+
     let server = HttpServer::new(move || {
         App::new()
             .data(db.clone())
             .wrap(Logger::default())
-            .configure(routes::init)
+            .configure(|cfg| routes::init(cfg, auth_state.clone()))
     });
 
     info!("Starting server...");
