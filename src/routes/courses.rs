@@ -1,23 +1,26 @@
-use actix_web::web;
+use actix_web::{get, post, web, HttpResponse, Responder};
 use actix_web_httpauth::middleware::HttpAuthentication;
+use sqlx::postgres::PgPool;
 
 use super::auth::AuthState;
+use crate::models::course::{Course, NewCourse};
 
-/*#[get("/{chapter_id}/courses")]
-async fn get_courses_of_subject(
-    web::Path(chapter_id): web::Path<String>,
-    db: web::Data<PgPool>,
-) -> impl Responder {
-    HttpResponse::Ok()
+#[get("/{course_id}")]
+async fn get_course(web::Path(course_id): web::Path<i32>, db: web::Data<PgPool>) -> impl Responder {
+    let course = Course::find_by_id(db.get_ref(), course_id).await.unwrap();
+
+    HttpResponse::Ok().json(course)
 }
 
-#[get("/courses/{course_id}")]
-async fn get_course(
-    web::Path(course_id): web::Path<String>,
+#[get("/{chapter_id}/coursses")]
+async fn get_courses(
+    web::Path(chapter_id): web::Path<i32>,
     db: web::Data<PgPool>,
 ) -> impl Responder {
-    let course = get_course_by_id(db.get_ref(), course_id).await.unwrap();
-    web::Json(course)
+    let courses = Course::find_all_from_chapter(db.get_ref(), chapter_id)
+        .await
+        .unwrap();
+    HttpResponse::Ok().json(courses)
 }
 
 #[post("/{chapter_id}/courses")]
@@ -26,16 +29,19 @@ async fn create_course(
     new_course: web::Json<NewCourse>,
     db: web::Data<PgPool>,
 ) -> impl Responder {
-    let id = add_course_to_chapter(db.get_ref(), new_course.into_inner(), chapter_id)
+    let course = Course::add_to_chapter(db.get_ref(), chapter_id, new_course.into_inner())
         .await
         .unwrap();
-    web::Json(CourseId(id))
-}*/
+
+    HttpResponse::Ok().json(course)
+}
 
 pub fn init(cfg: &mut web::ServiceConfig, auth_state: web::Data<AuthState>) {
     cfg.app_data(auth_state.clone()).service(
-        web::scope("/").wrap(HttpAuthentication::bearer(super::auth::auth_middleware)), /*.configure(|cfg| {
-                                                                                            cfg.service(get_course);
-                                                                                        })*/
+        web::scope("/")
+            .wrap(HttpAuthentication::bearer(super::auth::auth_middleware))
+            .configure(|cfg| {
+                cfg.service(create_course);
+            }),
     );
 }
