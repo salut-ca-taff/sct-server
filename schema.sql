@@ -55,6 +55,7 @@ CREATE TABLE "chapters" (
 
 CREATE TABLE "subjects" (
   "id" SERIAL PRIMARY KEY NOT NULL,
+  "slug" varchar(255) NOT NULL UNIQUE,
   "title" varchar(255) NOT NULL,
   "color" varchar(32)
 );
