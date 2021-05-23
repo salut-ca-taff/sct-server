@@ -7,7 +7,7 @@ pub struct Comment {
     pub author: String,
     pub course: i32,
     pub content: String,
-    pub created_at: DateTime<Utc>,
+    pub created_at: NaiveDateTime,
 }
 
 impl Comment {}

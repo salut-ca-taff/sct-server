@@ -13,7 +13,7 @@ pub struct Course {
     pub level: String,
     pub content: String,
     pub view_count: i32,
-    pub created_at: DateTime<Utc>,
+    pub created_at: NaiveDateTime,
 }
 
 #[derive(Debug, Deserialize)]
@@ -47,15 +47,15 @@ impl Course {
 
         if new_course.small.is_some() {
             additions.0 += ", small";
-            additions.1 += ", $4";
+            additions.1 += ", $5";
             if new_course.content.is_some() {
                 additions.0 += ", content";
-                additions.1 += ", $5";
+                additions.1 += ", $6";
             }
         } else {
             if new_course.content.is_some() {
                 additions.0 += ", content";
-                additions.1 += ", $4";
+                additions.1 += ", $5";
             }
         }
 

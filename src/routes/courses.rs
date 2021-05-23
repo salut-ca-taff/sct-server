@@ -20,6 +20,7 @@ async fn get_courses(
     let courses = Course::find_all_from_chapter(db.get_ref(), chapter_id)
         .await
         .unwrap();
+
     HttpResponse::Ok().json(courses)
 }
 
@@ -41,7 +42,9 @@ pub fn init(cfg: &mut web::ServiceConfig, auth_state: web::Data<AuthState>) {
         web::scope("/")
             .wrap(HttpAuthentication::bearer(super::auth::auth_middleware))
             .configure(|cfg| {
-                cfg.service(create_course);
+                cfg.service(get_course)
+                    .service(get_courses)
+                    .service(create_course);
             }),
     );
 }
