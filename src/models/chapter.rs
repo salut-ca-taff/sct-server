@@ -7,19 +7,19 @@ pub struct Chapter {
     pub id: i32,
     pub subject: i32,
     pub title: String,
-    pub description: String,
+    pub description: Option<String>,
 }
 
 impl Chapter {
     pub async fn find_all(db: &PgPool) -> Result<Vec<Self>> {
-        query_as("SELECT * IN chapters")
+        query_as("SELECT * FROM chapters")
             .fetch_all(db)
             .await
             .context("Couldn't fetch all chapters")
     }
 
     pub async fn find_all_from_subject(db: &PgPool, subject: i32) -> Result<Vec<Self>> {
-        query_as("SELECT * IN chapters WHERE subject = $1")
+        query_as("SELECT * FROM chapters WHERE subject = $1")
             .bind(subject)
             .fetch_all(db)
             .await

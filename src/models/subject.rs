@@ -5,5 +5,5 @@ pub struct Subject {
     pub id: i32,
     pub slug: String,
     pub title: String,
-    pub color: String,
+    pub color: Option<String>,
 }
