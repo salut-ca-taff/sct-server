@@ -12,7 +12,7 @@ async fn get_course(web::Path(course_id): web::Path<i32>, db: web::Data<PgPool>)
     HttpResponse::Ok().json(course)
 }
 
-#[get("/{chapter_id}/coursses")]
+#[get("/{chapter_id}/courses")]
 async fn get_courses(
     web::Path(chapter_id): web::Path<i32>,
     db: web::Data<PgPool>,
